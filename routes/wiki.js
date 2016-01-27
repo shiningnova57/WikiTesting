@@ -19,24 +19,29 @@ router.get('/', function (req, res, next) {
 // /wiki
 router.post('/', function (req, res, next) {
 
-    User.findOrCreate({
-        name: req.body.name,
-        email: req.body.email
-    }).then(function (user) {
+   User.findOrCreate({
+       name: req.body.name,
+       email: req.body.email
+   }).then(function (user) {
+       var tags;
+       if(req.body.tags) {
+           tags = req.body.tags;
+       } else {
+           tags = '';
+       }
+       var newPage = new Page({
+           title: req.body.title,
+           content: req.body.content,
+           status: req.body.status,
+           tags: tags.split(","),
+           author: user._id
+       });
 
-        var newPage = new Page({
-            title: req.body.title,
-            content: req.body.content,
-            status: req.body.status,
-            tags: req.body.tags.split(','),
-            author: user._id
-        });
+       return newPage.save();
 
-        return newPage.save();
-
-    }).then(function (page) {
-        res.redirect(page.route);
-    }).then(null, next);
+   }).then(function (page) {
+       res.redirect(page.route);
+   }).then(null, next);
 
 });
 

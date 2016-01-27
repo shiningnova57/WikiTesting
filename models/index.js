@@ -1,6 +1,13 @@
 var mongoose = require('mongoose');
 var marked = require('marked');
-mongoose.connect('mongodb://localhost/wikistack');
+
+//switches between two different DBs, based on process environment. This is 
+//determined by the test specs.  Refer to page.spec.js
+if (process.env.NODE_ENV === 'test') {
+    mongoose.connect('mongodb://localhost/testDB');
+} else {
+    mongoose.connect('mongodb://localhost/wikistack');
+}
 
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'mongodb connection error: '));

@@ -1,6 +1,12 @@
 var supertest = require('supertest');
 var app = require("../app");
 var agent = supertest.agent(app);
+//this allows us to switch to the test environment.  Must be placed before models
+process.env.NODE_ENV = 'test';
+var models = require('../models');
+var Page = models.Page;
+var User = models.User;
+
 
 describe('http requests', function() {
 
@@ -26,17 +32,17 @@ describe('http requests', function() {
     });
 
     describe('GET /wiki/:urlTitle', function() {
-    	// beforeEach(function(done) {
-     //        Page.create({
-     //            title: 'jai',
-     //            content: "frank",
-     //            tags: ['jai','frank']
-     //        }, done)
-     //    });
+    	beforeEach(function(done) {
+            Page.create({
+                title: 'jai',
+                content: "frank",
+                tags: ['jai','frank']
+            }, done)
+        });
 
-     //    afterEach(function(done){
-     //        Page.remove({}).then(function(){done()})
-     //    });
+        afterEach(function(done){
+            Page.remove({}).then(function(){done()})
+        });
 
         it('gets 404 on page that doesnt exist', function(done) {
         	agent
